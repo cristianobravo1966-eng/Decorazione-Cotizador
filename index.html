@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizador Online - Decorazione</title>
+    <!-- Bootstrap CSS para Diseño Móvil -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50; 
+            --accent-color: #d4af37;  
+            --whatsapp-color: #25d366;
+        }
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar-brand img {
+            max-height: 60px;
+        }
+        .card-custom {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .btn-custom {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 25px;
+        }
+        .btn-custom:hover {
+            background-color: #1a252f;
+            color: white;
+        }
+        .btn-whatsapp {
+            background-color: var(--whatsapp-color);
+            color: white;
+            border-radius: 25px;
+        }
+        .btn-whatsapp:hover {
+            background-color: #1ebd58;
+            color: white;
+        }
+        .price-display {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .tela-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR CON LOGO DECORAZIONE -->
+    <nav class="navbar navbar-light bg-white shadow-sm sticky-top">
+        <div class="container justify-content-center">
+            <a class="navbar-brand text-center" href="#">
+                <!-- URL de marcador de posición para el Logo de Decorazione -->
+                <img src="https://via.placeholder.com/200x60?text=Decorazione" alt="Decorazione Logo" id="logo">
+                <h1 class="h5 mt-2 text-muted text-uppercase tracking-wider">Cotizador Inteligente</h1>
+            </a>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <div class="row g-4">
+            
+            <!-- COLUMNA IZQUIERDA: CONFIGURADOR -->
+            <div class="col-lg-7">
+                <div class="card card-custom p-4 bg-white mb-4">
+                    <h2 class="h4 mb-4 text-secondary"><i class="bi bi-sliders"></i> Configura tu Cortina</h2>
+                    
+                    <form id="cotizadorForm">
+                        <!-- 1. Tipo de Cortina -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">1. Tipo de Cortina Roller</label>
+                            <select class="form-select form-select-lg" id="tipoCortina" onchange="actualizarTelas()">
+                                <option value="" disabled selected>Selecciona una opción...</option>
+                                <option value="duo" data-base="45000">Cortinas Roller Dúo Día y Noche</option>
+                                <option value="blackout" data-base="35000">Cortinas Roller Blackout</option>
+                                <option value="screen" data-base="38000">Cortinas Roller Screen</option>
+                                <option value="dobles" data-base="70000">Cortinas Roller Dobles (Blackout + Screen)</option>
+                                <option value="verticales" data-base="40000">Cortinas Roller Verticales</option>
+                                <!-- AQUÍ SE PUEDEN AGREGAR MÁS PRODUCTOS EN EL FUTURO -->
+                            </select>
+                        </div>
+
+                        <!-- 2. Tipo de Tela Dinámica con Miniatura -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">2. Selecciona la Tela</label>
+                            <div class="d-flex align-items-center gap-3">
+                                <select class="form-select" id="tipoTela" disabled onchange="cambiarImagenTela(); calcularTotal();">
+                                    <option value="" disabled selected>Primero selecciona el tipo de cortina...</option>
+                                </select>
+                                <!-- Miniatura visual de la tela -->
+                                <img id="previewTelaImg" src="https://via.placeholder.com/60?text=Tela" alt="Muestra de tela" class="tela-preview">
+                            </div>
+                        </div>
+
+                        <!-- 3. Medidas -->
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <label class="form-label fw-bold">Ancho (metros)</label>
+                                <input type="number" class="form-control" id="ancho" min="0.5" max="4" step="0.1" placeholder="Ej: 1.5" oninput="calcularTotal()">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold">Alto (metros)</label>
+                                <input type="number" class="form-control" id="alto" min="0.5" max="4" step="0.1" placeholder="Ej: 2.0" oninput="calcularTotal()">
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Extra 3: Accionamiento / Motorización -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">3. Tipo de Accionamiento</label>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="motor" id="manual" value="0" checked onchange="calcularTotal()">
+                                <label class="form-check-label" for="manual">
+                                    Manual (Cadena tradicional sin costo extra)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="motor" id="motorizada" value="45000" onchange="calcularTotal()">
+                                <label class="form-check-label d-flex justify-content-between" for="motorizada">
+                                    <span><i class="bi bi-cpu"></i> Motorizada (Control remoto / Domótica)</span>
+                                    <span class="text-muted">+ $45.000</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 4. Instalación opcional -->
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="incluyeInstalacion" onchange="calcularTotal()">
+                            <label class="form-check-label fw-bold" for="incluyeInstalacion">¿Necesitas instalación? (+ $15.000)</label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: TOTAL Y CONTACTO/WHATSAPP -->
+            <div class="col-lg-5">
+                <!-- Tarjeta de Precio -->
+                <div class="card card-custom p-4 bg-white mb-4 text-center border border-warning">
+                    <h3 class="h5 text-muted mb-1">Presupuesto Estimado</h3>
+                    <div class="price-display my-2" id="precioFinal">$0</div>
+                    <p class="text-muted small mb-0">Mínimo de cobro por cortina: 1.5 m²</p>
+                </div>
+
+                <!-- Formulario de Contacto Tradicional y WhatsApp -->
+                <div class="card card-custom p-4 bg-white">
+                    <h3 class="h5 mb-3 text-secondary"><i class="bi bi-send"></i> Solicitar Pedido</h3>
+                    <p class="small text-muted">Elige cómo prefieres que te contactemos en <strong>Decorazione</strong>.</p>
+                    
+                    <!-- Botón Extra 1: WhatsApp Directo -->
+                    <button class="btn btn-whatsapp w-100 btn-lg mb-3 fw-bold" onclick="enviarWhatsApp()">
+                        <i class="bi bi-whatsapp"></i> Pedir por WhatsApp
+                    </button>
+
+                    <div class="text-center text-muted my-2 small">— O POR CORREO ELECTRÓNICO —</div>
+
+                    <form action="https://formspree.io/f/tu_id_aqui" method="POST" class="mt-2">
+                        <input type="hidden" name="Resumen_Cotizacion" id="cotizacionOculta">
+                        
+                        <div class="mb-3">
+                            <input type="text" name="Nombre" class="form-control" placeholder="Tu Nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" name="Email" class="form-control" placeholder="Tu Correo" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="tel" name="Telefono" class="form-control" placeholder="Teléfono" required>
+                        </div>
+                        <button type="submit" class="btn btn-custom w-100">Enviar Formulario de Contacto</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SCRIPT DE AUTOMATIZACIÓN -->
+    <script>
+        // Base de datos de telas con nombre, factor de precio e imagen ilustrativa
+        const telasPorCortina = {
+            duo: [
+                { nombre: "Dúo Standard (Lino Clásico)", factor: 1.0, img: "https://images.unsplash.com/photo-1549488344-1f9b8d2bd1f3?w=100&auto=format&fit=crop" },
+                { nombre: "Dúo Premium (Texturizado Rústico)", factor: 1.2, img: "https://images.unsplash.com/photo-1615873968403-89e068629265?w=100&auto=format&fit=crop" },
+                { nombre: "Dúo Blackout (Máxima Privacidad)", factor: 1.4, img: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=100&auto=format&fit=crop" }
+            ],
+            blackout: [
+                { nombre: "Blackout Liso PVC (100% Oscuro)", factor: 1.0, img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=100&auto=format&fit=crop" },
+                { nombre: "Blackout Lino Texturado Elegante", factor: 1.3, img: "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=100&auto=format&fit=crop" }
+            ],
+            screen: [
+                { nombre: "Screen 5% (Visibilidad Balanceada)", factor: 1.0, img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=100&auto=format&fit=crop" },
+                { nombre: "Screen 1% (Mayor Filtro Solar)", factor: 1.2, img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=100&auto=format&fit=crop" }
+            ],
+            dobles: [
+                { nombre: "Combo Doble Standard", factor: 1.0, img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=100&auto=format&fit=crop" }
+            ],
+            verticales: [
+                { nombre: "Vertical Tela Screen", factor: 1.0, img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=100&auto=format&fit=crop" },
+                { nombre: "Vertical PVC Opaco", factor: 1.1, img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=100&auto=format&fit=crop" }
+            ]
+        };
+
+        let resumenTexto = "";
+
+        function actualizarTelas() {
+            const tipo = document.getElementById("tipoCortina").value;
+            const selectTela = document.getElementById("tipoTela");
+            
+            selectTela.innerHTML = "";
+            selectTela.disabled = false;
+
+            telasPorCortina[tipo].forEach((tela, index) => {
+                let opt = document.createElement("option");
+                opt.value = tela.factor;
+                opt.dataset.img = tela.img;
+                opt.textContent = tela.nombre;
+                selectTela.appendChild(opt);
+            });
+
+            cambiarImagenTela();
+            calcularTotal();
+        }
+
+        function cambiarImagenTela() {
+            const selectTela = document.getElementById("tipoTela");
+            const imgPreview = document.getElementById("previewTelaImg");
+            const opcionSeleccionada = selectTela.options[selectTela.selectedIndex];
+            
+            if (opcionSeleccionada && opcionSeleccionada.dataset.img) {
+                imgPreview.src = opcionSeleccionada.dataset.img;
+            }
+        }
+
+        function calcularTotal() {
+            const tipoCortina = document.getElementById("tipoCortina");
+            const selectTela = document.getElementById("tipoTela");
+            const ancho = parseFloat(document.getElementById("ancho").value) || 0;
+            const alto = parseFloat(document.getElementById("alto").value) || 0;
+            const incluyeInstalacion = document.getElementById("incluyeInstalacion").checked;
+            const motorValor = parseFloat(document.querySelector('input[name="motor"]:checked').value);
+
+            if (!tipoCortina.value || ancho === 0 || alto === 0) {
+                document.getElementById("precioFinal").textContent = "$0";
+                return;
+            }
+
+            const precioBaseM2 = parseFloat(tipoCortina.options[tipoCortina.selectedIndex].getAttribute("data-base"));
+            const factorTela = parseFloat(selectTela.value) || 1.0;
+
+            // Regla de negocio: mínimo 1.5 m² por cortina
+            let m2 = ancho * alto;
+            if (m2 < 1.5) m2 = 1.5; 
+
+            // Cálculo matemático base
+            let total = (m2 * precioBaseM2 * factorTela) + motorValor;
+
+            if (incluyeInstalacion) {
+                total += 15000;
+            }
+
+            const totalFormateado = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(total);
+            document.getElementById("precioFinal").textContent = totalFormateado;
+
+            // Guardar texto estructurado para WhatsApp o Email
+            resumenTexto = `Hola Decorazione, coticé una cortina:\n` +
+                           `- Tipo: ${tipoCortina.options[tipoCortina.selectedIndex].text}\n` +
+                           `- Tela: ${selectTela.options[selectTela.selectedIndex].text}\n` +
+                           `- Medidas: ${ancho}m x ${alto}m (${m2.toFixed(2)} m² cobrados)\n` +
+                           `- Accionamiento: ${motorValor > 0 ? 'Motorizada' : 'Manual'}\n` +
+                           `- Instalación: ${incluyeInstalacion ? 'Sí' : 'No'}\n` +
+                           `- Total Estimado: ${totalFormateado}`;
+
+            document.getElementById("cotizacionOculta").value = resumenTexto;
+        }
+
+        function enviarWhatsApp() {
+            if (resumenTexto === "") {
+                alert("Por favor, primero completa las medidas y el tipo de cortina.");
+                return;
+            }
+            // REEMPLAZA EL NÚMERO DE ABAJO CON EL DE DECORAZIONE (con código de país, ej: 56912345678 para Chile)
+            const telefonoEmpresa = "56912345678"; 
+            const url = `https://api.whatsapp.com/send?phone=${telefonoEmpresa}&text=${encodeURIComponent(resumenTexto)}`;
+            window.open(url, '_blank');
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
